@@ -1,0 +1,13 @@
+let counter: int = 0;
+let total: int = 0;
+
+while (counter < 5) {
+    total = total + counter;
+    counter = counter + 1;
+}
+
+if (total == 10 && true) {
+    print(total);
+} else {
+    print(0);
+}
