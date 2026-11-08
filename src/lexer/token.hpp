@@ -15,7 +15,7 @@ enum class TokenType {
     Less, LessEqual, Greater, GreaterEqual,
     AndAnd, OrOr, Arrow,
     Identifier, Integer,
-    Let, Fn, If, Else, While, Return, Print,
+    Let, Fn, If, Else, While, For, Return, Print,
     True, False, Int, Bool,
     EndOfFile
 };

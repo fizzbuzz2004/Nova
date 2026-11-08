@@ -124,6 +124,22 @@ void CppGenerator::emit_statement(const Stmt& statement, int indent) {
                 output_ += "{\n"; emit_statement(*node.body, indent + 1);
                 write_indent(indent); output_ += "}\n";
             }
+        } else if constexpr (std::is_same_v<Node, ForStatement>) {
+            write_indent(indent); output_ += "{\n";
+            if (node.initializer) emit_statement(*node.initializer, indent + 1);
+            write_indent(indent + 1); output_ += "while (" + emit_expression(*node.condition) + ") ";
+            if (const auto* block = std::get_if<BlockStatement>(&node.body->node)) {
+                output_ += "{\n";
+                for (const auto& child : block->statements) emit_statement(*child, indent + 2);
+                write_indent(indent + 2); output_ += emit_expression(*node.update) + ";\n";
+                write_indent(indent + 1); output_ += "}\n";
+            } else {
+                output_ += "{\n";
+                emit_statement(*node.body, indent + 2);
+                write_indent(indent + 2); output_ += emit_expression(*node.update) + ";\n";
+                write_indent(indent + 1); output_ += "}\n";
+            }
+            write_indent(indent); output_ += "}\n";
         } else if constexpr (std::is_same_v<Node, FunctionDeclaration>) {
             output_ += cpp_type(node.return_type) + " " + function_name(node.name) + "(";
             for (std::size_t i = 0; i < node.parameters.size(); ++i) {

@@ -14,6 +14,13 @@ namespace nova {
 struct Stmt;
 using StmtPtr = std::unique_ptr<Stmt>;
 
+struct ForStatement {
+    StmtPtr initializer;
+    ExprPtr condition;
+    ExprPtr update;
+    StmtPtr body;
+};
+
 struct VariableDeclaration {
     std::string name;
     std::optional<Type> declared_type;
@@ -34,7 +41,7 @@ struct FunctionDeclaration {
 struct ReturnStatement { ExprPtr value; };
 
 using StmtNode = std::variant<VariableDeclaration, ExpressionStatement, PrintStatement,
-                              BlockStatement, IfStatement, WhileStatement,
+                              BlockStatement, IfStatement, WhileStatement, ForStatement,
                               FunctionDeclaration, ReturnStatement>;
 
 struct Stmt {

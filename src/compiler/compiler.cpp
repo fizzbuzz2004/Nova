@@ -6,6 +6,8 @@
 #include "parser/parser.hpp"
 #include "semantic/analyzer.hpp"
 
+#include <algorithm>
+#include <cctype>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
@@ -89,8 +91,19 @@ void Compiler::invoke_native_compiler(const std::string& compiler,
 #else
     const std::string executable = output_file.string();
 #endif
-    const std::string command = shell_quote(compiler) + " -std=c++20 -O2 " +
-        shell_quote(cpp_file.string()) + " -o " + shell_quote(executable);
+    std::string compiler_name = std::filesystem::path(compiler).filename().string();
+    std::transform(compiler_name.begin(), compiler_name.end(), compiler_name.begin(),
+        [](unsigned char character) { return static_cast<char>(std::tolower(character)); });
+    const bool is_msvc = compiler_name == "cl" || compiler_name == "cl.exe";
+
+    std::string command;
+    if (is_msvc) {
+        command = shell_quote(compiler) + " /std:c++20 /O2 " +
+            shell_quote(cpp_file.string()) + " /Fe" + shell_quote(executable);
+    } else {
+        command = shell_quote(compiler) + " -std=c++20 -O2 " +
+            shell_quote(cpp_file.string()) + " -o " + shell_quote(executable);
+    }
     const int status = std::system(command.c_str());
     if (status != 0) {
         throw std::runtime_error("Native compiler failed (exit status " + std::to_string(status) +

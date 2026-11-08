@@ -41,6 +41,7 @@ std::string_view token_type_name(TokenType type) noexcept {
         case TokenType::Int: return "'int'";
         case TokenType::Bool: return "'bool'";
         case TokenType::EndOfFile: return "end of file";
+        case TokenType::For: return "'for'";
     }
     return "unknown token";
 }

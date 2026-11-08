@@ -26,6 +26,7 @@ private:
     StmtPtr print_statement();
     StmtPtr if_statement();
     StmtPtr while_statement();
+    StmtPtr for_statement();
     StmtPtr return_statement();
     StmtPtr block_statement();
     StmtPtr expression_statement();

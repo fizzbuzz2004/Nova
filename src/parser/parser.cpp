@@ -69,6 +69,7 @@ StmtPtr Parser::statement() {
     if (match(TokenType::Print)) return print_statement();
     if (match(TokenType::If)) return if_statement();
     if (match(TokenType::While)) return while_statement();
+    if (match(TokenType::For)) return for_statement();
     if (match(TokenType::Return)) return return_statement();
     if (match(TokenType::LeftBrace)) return block_statement();
     return expression_statement();
@@ -112,6 +113,30 @@ StmtPtr Parser::while_statement() {
     (void)consume(TokenType::LeftBrace, "Expected '{' before while body.");
     StmtPtr body = std::make_unique<Stmt>(position, BlockStatement{block_contents()});
     return std::make_unique<Stmt>(position, WhileStatement{std::move(condition), std::move(body)});
+}
+
+StmtPtr Parser::for_statement() {
+    const SourcePosition position = previous().position;
+    (void)consume(TokenType::LeftParen, "Expected '(' after 'for'.");
+
+    StmtPtr initializer;
+    if (match(TokenType::Semicolon)) {
+        initializer = nullptr;
+    } else if (match(TokenType::Let)) {
+        initializer = variable_declaration();
+    } else {
+        initializer = expression_statement();
+    }
+
+    ExprPtr condition = expression();
+    (void)consume(TokenType::Semicolon, "Expected ';' after loop condition.");
+    ExprPtr update = expression();
+    (void)consume(TokenType::RightParen, "Expected ')' after for clauses.");
+    (void)consume(TokenType::LeftBrace, "Expected '{' before for body.");
+    StmtPtr body = std::make_unique<Stmt>(position, BlockStatement{block_contents()});
+
+    return std::make_unique<Stmt>(position,
+        ForStatement{std::move(initializer), std::move(condition), std::move(update), std::move(body)});
 }
 
 StmtPtr Parser::return_statement() {

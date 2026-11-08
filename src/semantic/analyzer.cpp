@@ -64,6 +64,9 @@ bool SemanticAnalyzer::definitely_returns(const Stmt& statement) {
         } else if constexpr (std::is_same_v<Node, IfStatement>) {
             return node.else_branch && definitely_returns(*node.then_branch) &&
                    definitely_returns(*node.else_branch);
+        } else if constexpr (std::is_same_v<Node, WhileStatement> ||
+                             std::is_same_v<Node, ForStatement>) {
+            return false;
         } else {
             return false;
         }
@@ -101,6 +104,14 @@ void SemanticAnalyzer::analyze_statement(const Stmt& statement) {
             if (analyze_expression(*node.condition) != Type::Bool)
                 fail("While condition must have type bool.", node.condition->position);
             analyze_statement(*node.body);
+        } else if constexpr (std::is_same_v<Node, ForStatement>) {
+            scopes_.emplace_back();
+            if (node.initializer) analyze_statement(*node.initializer);
+            if (analyze_expression(*node.condition) != Type::Bool)
+                fail("For condition must have type bool.", node.condition->position);
+            (void)analyze_expression(*node.update);
+            analyze_statement(*node.body);
+            scopes_.pop_back();
         } else if constexpr (std::is_same_v<Node, FunctionDeclaration>) {
             if (inside_function_ || scopes_.size() != 1U)
                 fail("Function declarations are only allowed at top level.", statement.position);

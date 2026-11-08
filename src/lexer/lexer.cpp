@@ -116,7 +116,7 @@ void Lexer::scan_identifier() {
     static const std::unordered_map<std::string_view, TokenType> keywords{
         {"let", TokenType::Let}, {"fn", TokenType::Fn},
         {"if", TokenType::If}, {"else", TokenType::Else},
-        {"while", TokenType::While}, {"return", TokenType::Return},
+        {"while", TokenType::While}, {"for", TokenType::For}, {"return", TokenType::Return},
         {"print", TokenType::Print}, {"true", TokenType::True},
         {"false", TokenType::False}, {"int", TokenType::Int}, {"bool", TokenType::Bool}
     };

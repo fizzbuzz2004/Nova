@@ -8,7 +8,7 @@ source into a native executable.
 
 - CMake 3.20+
 - A C++20 compiler to build Nova
-- GCC or Clang (`g++` or `clang++`) on `PATH` to build generated programs
+- GCC, Clang (`g++` or `clang++`), or MSVC (`cl.exe`) to build generated programs
 
 ## Build Nova
 
@@ -49,7 +49,7 @@ print(answer);
 
 Supported in this initial vertical slice: `int`, `bool`, variables, assignment,
 integer arithmetic, comparisons, logical operators, `print`, blocks, `if`/`else`,
-`while`, typed functions, calls and `return`. Function declarations must be at top level;
+`while`, `for` loops, typed functions, calls and `return`. Function declarations must be at top level;
 function bodies cannot capture top-level variables in this version. Every function must
 return a value on all statically obvious control-flow paths.
 
